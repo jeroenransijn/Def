@@ -103,26 +103,7 @@
         throw new TypeError('(def)(arg:1/4)('+args[i -1]+'): is not a string');
       }
     }
-
   }
 
   window.def = def;
 })(window);
-
-// @param {string|function} returnType
-// @param {array} argTypes
-// @param {function} callback
-var func = def('object', ['string','array'], function (text, list) {
-  return {
-    text: text,
-    list: list 
-  };
-});
-
-func();
-
-// often I write something like this
-
-// @return {object}
-var func = function () {
-}
