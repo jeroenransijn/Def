@@ -31,11 +31,56 @@ func2();
 ```
 
 
-## Motivation
-Writing functions that need some sort of type checking in JavaScript doesn't need to suck.
+## How it works
+Writing functions that need some sort of type checking in JavaScript doesn't need to suck. Often type checking gets annoying and results in code such as this:
+
+```javascript
+// @param {array} someList
+// @param {string} someText
+// @param {element} el
+// @return {object}
+var annoying = function (someList, someText, el) {
+  if ( ! ({}).toString.call(someList) === '[object Array]' ) {
+    throw new TypeError('(annoying)(arg:1/3): someList is not an array');
+  }
+
+  if ( ! typeof someText === 'string') {
+    throw new TypeError('(annoying)(arg:2/3): someText is not a string');
+  }
+
+  if ( ! el instanceof Element ) {
+    throw new TypeError('(annoying)(arg:3/3): el is not an an element')
+  }
+
+  // finally do stuff
+  return { /* with some content */ };
+};
+```
+In the function above, I often write some sort of doc blocks before the function. Although I don't use an IDE with support for doc blocks (is there any for js?) I do it to make it clear for myself what types I expect, and what type is returned. Instead of doing it the way above, with the use of def you can define functions in a simpler way, and have the power of type checking even before the function is invoked.
+```javascript
+var func = def('object', ['array', 'string', Element], function (someList, someText, el) {
+  // do stuff
+  return { /* with some content */ };
+});
+```
+The same function only without the need to worry about type checking, and just write code instead.
+
 
 ## Installation
 Download def.js and include it in your web page or node project
 ```html
 <script src="def.js"></script>
 ```
+
+## Is it really necessary to use this?
+For some projects it might be trivial to have some sort of strong type checking, not every project or function requires this. For now, this project is still experimental, and I hope to make it more useful and powerful in the future.
+
+## What about duck typing?
+For now there is not support for duck types. I hope to support this in the future, and have a more powerful type checking system, maybe even decoupled from this project.
+
+## Roadmap
+Currently this micro-library, or however you want to call it, is very experimental. Some things that need attention are:
+* *Testing:* unit tests, thinking about jasmine
+* *Performance:* make tests on JsPerf to collect data about performance
+* *Error logging:* make logging a powerful feature
+* *Documentation:* write better docs
