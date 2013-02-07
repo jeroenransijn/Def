@@ -1,4 +1,5 @@
 # Def.js
+*Define semi strong functions in JavaScript with Def.js*
 
 ## Example
 Usage example with a return type, argument types and the function itself (callback)
@@ -56,6 +57,7 @@ var annoying = function (someList, someText, el) {
   return { /* with some content */ };
 };
 ```
+
 In the function above, I often write some sort of doc blocks before the function. Although I don't use an IDE with support for doc blocks (is there any for js?) I do it to make it clear for myself what types I expect, and what type is returned. Instead of doing it the way above, with the use of def you can define functions in a simpler way, and have the power of type checking even before the function is invoked.
 ```javascript
 var func = def('object', ['array', 'string', Element], function (someList, someText, el) {
@@ -63,7 +65,48 @@ var func = def('object', ['array', 'string', Element], function (someList, someT
   return { /* with some content */ };
 });
 ```
-The same function only without the need to worry about type checking, and just write code instead.
+The same function only without the need to worry about type checking, and just write code instead. As you can see above I pass in the types I expect as strings `'object','array','string'`. But for the element I just pass in `Element`. Inside def, a discrimination is made between checking with the use of `Object.prototype.toString` and the `instanceof` operator.
+
+### Types passed as a string use `Object.prototype.toString`
+This way of type checking is pretty much bulletproof, but on the same time also quite heavy compared to the `typeof` operator or compared to duck typing. Read more about it in this excellent article called [Fixing the JavaScript typeof operator](http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/). The examples underneath are shamelessly copied from this article.
+
+#### Overview of what to expect
+```javascript
+// method used inside def.js
+function toType (obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+}
+
+// returns
+toType({a: 4}); 
+// => "object"
+toType([1, 2, 3]);
+// => "array"
+(function() {console.log(toType(arguments))})();
+// => arguments
+toType(new ReferenceError);
+// => "error"
+toType(new Date);
+// => "date"
+toType(/a-z/);
+// => "regexp"
+toType(Math);
+// => "math"
+toType(JSON);
+// => "json"
+toType(new Number(4));
+// =>"number"
+toType(new String("abc"));
+// => "string"
+toType(new Boolean(true));
+// => "boolean"
+```
+
+### Types passed as a constructor use `instanceof`
+Someimtes you need to check for instances of a constuctor. More info on how the `instanceof` operator works can be found on [Mozilla developer netowrk](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/instanceof).
+
+#### Overview of what to expect
+
 
 
 ## Installation
@@ -82,5 +125,6 @@ For now there is not support for duck types. I hope to support this in the futur
 Currently this micro-library, or however you want to call it, is very experimental. Some things that need attention are:
 * *Testing:* unit tests, thinking about jasmine
 * *Performance:* make tests on JsPerf to collect data about performance
+* *This:* find out if the `this` keyword is applied correctly
 * *Error logging:* make logging a powerful feature
 * *Documentation:* write better docs
