@@ -103,11 +103,29 @@ toType(new Boolean(true));
 ```
 
 ### Types passed as a constructor use `instanceof`
-Someimtes you need to check for instances of a constuctor. More info on how the `instanceof` operator works can be found on [Mozilla developer netowrk](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/instanceof).
+Someimtes you need to check for instances of a constuctor. More info on how the `instanceof` operator works can be found on the [Mozilla developer network](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/instanceof). The example underneath is shamelessly copied from this article.
 
 #### Overview of what to expect
-
-
+```javascript
+function C(){} // defining a constructor
+function D(){} // defining another constructor
+ 
+var o = new C();
+o instanceof C; // true, because: Object.getPrototypeOf(o) === C.prototype
+o instanceof D; // false, because D.prototype is nowhere in o's prototype chain
+o instanceof Object; // true, because:
+C.prototype instanceof Object // true
+ 
+C.prototype = {};
+var o2 = new C();
+o2 instanceof C; // true
+o instanceof C; // false, because C.prototype is nowhere in o's prototype chain anymore
+ 
+D.prototype = new C(); // use inheritance
+var o3 = new D();
+o3 instanceof D; // true
+o3 instanceof C; // true
+```
 
 ## Installation
 Download def.js and include it in your web page or node project
